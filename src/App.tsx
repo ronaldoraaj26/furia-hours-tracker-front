@@ -4,9 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import AddHours from "./pages/AddHours";
-import MyHours from "./pages/MyHours";
+import MainLayout from "./pages/MainLayout";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -19,9 +17,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/add-hours/:modality" element={<AddHours />} />
-          <Route path="/hours" element={<MyHours />} />
+          <Route path="/app" element={<MainLayout />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
