@@ -14,7 +14,7 @@ const Login = () => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     // Mock login - navigate to dashboard
-    navigate("/dashboard");
+    navigate("/App");
   };
 
   return (
