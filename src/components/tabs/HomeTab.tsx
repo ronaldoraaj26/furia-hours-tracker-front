@@ -62,16 +62,16 @@ const HomeTab = () => {
 
       {/* Carousel */}
       <div className="relative">
-        <div className={`bg-gradient-to-br ${slide.gradient} rounded-2xl p-8 min-h-[260px] flex items-center transition-all duration-500 relative overflow-hidden`}>
+        <div className={`bg-gradient-to-br ${slide.gradient} rounded-2xl p-8 min-h-[300px] flex items-center transition-all duration-500 relative overflow-hidden`}>
           <div className="absolute inset-0 bg-black/30" />
-          <div className="relative z-10 flex items-center gap-8 w-full">
+          <div className="relative z-10 flex items-center gap-8 w-full p-10">
             <div className="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur flex items-center justify-center shrink-0">
               <Icon className="w-10 h-10 text-white" />
             </div>
             <div className="flex-1 text-white space-y-2">
-              <p className="text-sm font-body opacity-80 uppercase tracking-wider">{slide.subtitle}</p>
+              <p className="text-sm font-body opacity-80 uppercase tracking-wider">{slide.subtitle} penis</p>
               <h3 className="font-display font-bold text-2xl">{slide.title}</h3>
-              <p className="font-body text-white/80 max-w-lg">{slide.description}</p>
+              <p className="font-body text-white/80">{slide.description}</p>
               {slide.link !== "#" && (
                 <a
                   href={slide.link}

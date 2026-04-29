@@ -82,7 +82,13 @@ const RegisterHoursTab = () => {
             >
               <div className={`absolute inset-0 bg-gradient-to-br ${mod.color} opacity-0 ${active ? "opacity-15" : "group-hover:opacity-10"} transition-opacity`} />
               <div className="relative z-10 flex flex-col items-center gap-2">
-                <Icon className={`w-7 h-7 ${active ? "text-primary" : "text-muted-foreground"}`} />
+                <img 
+            src={mod.image} 
+            alt={mod.name}
+            className={`w-8 h-8 object-contain transition-all ${
+              active ? "brightness-110 scale-110" : "grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100"
+            }`} 
+          />
                 <span className={`text-xs font-display font-bold ${active ? "text-primary" : "text-foreground"}`}>
                   {mod.name}
                 </span>

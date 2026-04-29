@@ -66,9 +66,10 @@ const DirectorTab = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {summary.map((m) => {
           const Icon = m.icon;
+          const active = filter === m.id;
           return (
             <div key={m.id} className="bg-card border border-border rounded-xl p-4 text-center hover:border-primary/30 transition-colors cursor-pointer" onClick={() => setFilter(m.id === filter ? "all" : m.id)}>
-              <Icon className={`w-6 h-6 mx-auto mb-2 ${filter === m.id ? "text-primary" : "text-muted-foreground"}`} />
+            <img src={m.image} alt={m.name} className={`w-8 h-8 mx-auto mb-2 object-contain transition-all duration-300 ${active ? "brightness-110 scale-110" : "grayscale opacity-50 hover:grayscale-0 hover:opacity-100"}`} />
               <p className="font-display font-extrabold text-xl text-primary">{m.totalHours}h</p>
               <p className="text-xs text-muted-foreground font-body">{m.name}</p>
               <p className="text-xs text-muted-foreground">{m.count} atividades</p>
