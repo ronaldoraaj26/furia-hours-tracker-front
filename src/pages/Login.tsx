@@ -1,20 +1,57 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import logo from "@/assets/logo-furia.jpg";
 import { Lock, User } from "lucide-react";
+import { clearAuth, getAuthToken, setAuthToken } from "@/lib/api";
+import { fetchCurrentUser, login } from "@/lib/backend";
+import { toast } from "sonner";
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!getAuthToken()) {
+      return;
+    }
+
+    let mounted = true;
+    fetchCurrentUser()
+      .then(() => {
+        if (mounted) {
+          navigate("/app");
+        }
+      })
+      .catch(() => {
+        clearAuth();
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [navigate]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock login - navigate to dashboard
-    navigate("/App");
+    setIsSubmitting(true);
+    clearAuth();
+
+    try {
+      const response = await login(email, password);
+      setAuthToken(response.token, response.expires_at);
+
+      navigate("/app");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Não foi possível autenticar";
+      toast.error(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -80,9 +117,10 @@ const Login = () => {
 
           <Button
             type="submit"
+            disabled={isSubmitting}
             className="w-full font-display font-bold text-lg tracking-wider h-12 animate-pulse-glow"
           >
-            ENTRAR
+            {isSubmitting ? "ENTRANDO..." : "ENTRAR"}
           </Button>
         </form>
       </div>

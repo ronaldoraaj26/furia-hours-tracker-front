@@ -1,4 +1,5 @@
 import { Gamepad2, Swords, Smartphone, Grid3X3, Crosshair, Car, Flame, Trophy } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 export const modalities = [
   { id: "lol", name: "League of Legends", icon: Swords, image: "/imgs/lol.png", color: "from-yellow-600 to-amber-500" },
@@ -15,6 +16,17 @@ export const modalityNames: Record<string, string> = Object.fromEntries(
   modalities.map((m) => [m.id, m.name])
 );
 
-export const modalityIcons: Record<string, any> = Object.fromEntries(
-  modalities.map((m) => [m.id, m.icon])
-);
+export const modalityIcons: Record<string, LucideIcon> = Object.fromEntries(modalities.map((m) => [m.id, m.icon])) as Record<
+  string,
+  LucideIcon
+>;
+
+const normalize = (value: string) => value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+export const getModalityMetaByName = (name: string) => {
+  const normalized = normalize(name);
+  return (
+    modalities.find((modality) => normalize(modality.name) === normalized || normalize(modality.id) === normalized) ??
+    null
+  );
+};

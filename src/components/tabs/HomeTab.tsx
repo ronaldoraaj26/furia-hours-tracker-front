@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Instagram, MessageCircle, Newspaper, CalendarDays, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { fetchCategories, fetchMineTimeEntries, fetchProjects } from "@/lib/backend";
 
 const slides = [
   {
@@ -42,6 +44,9 @@ const slides = [
 
 const HomeTab = () => {
   const [current, setCurrent] = useState(0);
+  const projectsQuery = useQuery({ queryKey: ["projects"], queryFn: fetchProjects });
+  const categoriesQuery = useQuery({ queryKey: ["categories"], queryFn: fetchCategories });
+  const mineQuery = useQuery({ queryKey: ["time-entries", "mine"], queryFn: fetchMineTimeEntries });
 
   useEffect(() => {
     const timer = setInterval(() => setCurrent((c) => (c + 1) % slides.length), 5000);
@@ -50,6 +55,10 @@ const HomeTab = () => {
 
   const slide = slides[current];
   const Icon = slide.icon;
+  const projects = projectsQuery.data ?? [];
+  const categories = categoriesQuery.data ?? [];
+  const entries = mineQuery.data ?? [];
+  const totalHours = entries.reduce((sum, entry) => sum + Number(entry.hours_worked ?? 0), 0);
 
   return (
     <div className="p-8 max-w-5xl mx-auto space-y-8">
@@ -69,7 +78,7 @@ const HomeTab = () => {
               <Icon className="w-10 h-10 text-white" />
             </div>
             <div className="flex-1 text-white space-y-2">
-              <p className="text-sm font-body opacity-80 uppercase tracking-wider">{slide.subtitle} penis</p>
+              <p className="text-sm font-body opacity-80 uppercase tracking-wider">{slide.subtitle}</p>
               <h3 className="font-display font-bold text-2xl">{slide.title}</h3>
               <p className="font-body text-white/80">{slide.description}</p>
               {slide.link !== "#" && (
@@ -115,10 +124,10 @@ const HomeTab = () => {
       {/* Quick stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Modalidades", value: "8" },
-          { label: "Membros Ativos", value: "45+" },
-          { label: "Horas Registradas", value: "320h" },
-          { label: "Competições", value: "12" },
+          { label: "Modalidades", value: projectsQuery.isLoading ? "..." : String(projects.length) },
+          { label: "Registros", value: mineQuery.isLoading ? "..." : String(entries.length) },
+          { label: "Horas Registradas", value: mineQuery.isLoading ? "..." : `${totalHours.toFixed(2)}h` },
+          { label: "Categorias", value: categoriesQuery.isLoading ? "..." : String(categories.length) },
         ].map((stat) => (
           <div key={stat.label} className="bg-card border border-border rounded-xl p-5 text-center">
             <p className="font-display font-extrabold text-2xl text-primary">{stat.value}</p>
@@ -126,6 +135,12 @@ const HomeTab = () => {
           </div>
         ))}
       </div>
+
+      {(projectsQuery.isError || categoriesQuery.isError || mineQuery.isError) && (
+        <div className="bg-card border border-border rounded-xl p-4 text-sm text-muted-foreground">
+          Alguns indicadores não puderam ser carregados agora.
+        </div>
+      )}
     </div>
   );
 };

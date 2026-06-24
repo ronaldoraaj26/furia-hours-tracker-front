@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "@/assets/logo-furia.jpg";
 import { Home, PlusCircle, Clock, Shield, CalendarDays, LogOut } from "lucide-react";
@@ -7,6 +7,8 @@ import RegisterHoursTab from "@/components/tabs/RegisterHoursTab";
 import MyHoursTab from "@/components/tabs/MyHoursTab";
 import DirectorTab from "@/components/tabs/DirectorTab";
 import CalendarTab from "@/components/tabs/CalendarTab";
+import { clearAuth } from "@/lib/api";
+import { fetchCurrentUser } from "@/lib/backend";
 
 const tabs = [
   { id: "home", label: "Início", icon: Home },
@@ -19,6 +21,32 @@ const tabs = [
 const MainLayout = () => {
   const [activeTab, setActiveTab] = useState("home");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let mounted = true;
+
+    const verifySession = async () => {
+      try {
+        await fetchCurrentUser();
+      } catch (error) {
+        if (!mounted) {
+          return;
+        }
+
+        const status = error && typeof error === "object" && "status" in error ? (error as { status?: number }).status : undefined;
+        if (status === 401 || status === 403) {
+          clearAuth();
+          navigate("/");
+        }
+      }
+    };
+
+    verifySession();
+
+    return () => {
+      mounted = false;
+    };
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -55,7 +83,10 @@ const MainLayout = () => {
 
         <div className="p-3 border-t border-border">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => {
+              clearAuth();
+              navigate("/");
+            }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-body text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
           >
             <LogOut className="w-5 h-5" />
